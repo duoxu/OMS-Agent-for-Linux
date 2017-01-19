@@ -108,6 +108,14 @@ MAINTAINER:              'Microsoft Corporation'
 /opt/microsoft/omsagent/plugin/agent_maintenance_script.rb;             source/code/plugins/agent_maintenance_script.rb;       744; root; root
 
 /opt/microsoft/omsagent/plugin/filter_hdinsight.rb;                     source/code/plugins/filter_hdinsight.rb;               744; root; root
+/opt/microsoft/omsagent/plugin/filter_scom_simple_match.rb;             source/code/plugins/filter_scom_simple_match.rb;       744; root; root
+/opt/microsoft/omsagent/plugin/filter_scom_excl_match.rb;               source/code/plugins/filter_scom_excl_match.rb;         744; root; root
+/opt/microsoft/omsagent/plugin/filter_scom_cor_match.rb;                source/code/plugins/filter_scom_cor_match.rb;          744; root; root
+/opt/microsoft/omsagent/plugin/filter_scom_repeated_cor.rb;             source/code/plugins/filter_scom_repeated_cor.rb;          744; root; root
+/opt/microsoft/omsagent/plugin/filter_scom_excl_correlation.rb;         source/code/plugins/filter_scom_excl_correlation.rb;          744; root; root
+/opt/microsoft/omsagent/plugin/scom_common.rb;                          source/code/plugins/scom_common.rb;                    744; root; root
+/opt/microsoft/omsagent/plugin/scom_configuration.rb;                   source/code/plugins/scom_configuration.rb;                    744; root; root
+/opt/microsoft/omsagent/plugin/out_scom.rb;                             source/code/plugins/out_scom.rb;                        744; root; root
 
 %Links
 /opt/microsoft/omsagent/bin/omsagent; /opt/microsoft/omsagent/ruby/bin/fluentd; 755; root; root
@@ -150,6 +158,15 @@ chown -R omsagent:omiusers /var/opt/microsoft/omsagent
 
 # Ditto for conf directory in /etc/opt/microsoft/omsagent/conf ...
 
+# The scx certificate and key needs to be owned by omsagent so that it is readable and can be used during SCOM authentication
+# Had to add it here as this can only be done after omsagent service account creation
+if [ -f /etc/opt/microsoft/scx/ssl/scx.pem ]; then
+   chown omsagent:omiusers /etc/opt/microsoft/scx/ssl/scx.pem
+fi
+
+if [ -f /etc/opt/omi/ssl/omikey.pem ]; then
+   chown omsagent:omiusers /etc/opt/omi/ssl/omikey.pem
+fi
 
 %Postinstall_200
 /opt/microsoft/omsagent/bin/omsadmin.sh -M

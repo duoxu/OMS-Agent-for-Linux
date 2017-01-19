@@ -56,6 +56,8 @@ setup_variables()
     OMSADMIN_CONF=$CONF_DIR/omsadmin.conf
 
     OMSAGENT_WS=omsagent-$WORKSPACE_ID
+
+    SCOMADMIN_CONF=/etc/opt/microsoft/scx/conf/scomadmin.conf
 }
 
 verify_privileges()
@@ -86,7 +88,7 @@ is_omsagent_running()
 
 exit_if_agent_not_onboarded()
 {
-    if [ ! -f $OMSADMIN_CONF ]; then
+    if [ ! -f $OMSADMIN_CONF ] && [ ! -f $SCOMADMIN_CONF ]; then
         echo "Warning: Agent is not onboarded. omsagent cannot be registered as a service."
         exit 0 
     fi
@@ -245,7 +247,7 @@ find_systemd_dir()
 enable_omsagent_service()
 {
     exit_if_agent_not_onboarded
-    if [ ! -f $CONF_DIR/.service_registered ] && [ -f $OMSADMIN_CONF ]; then
+    if [ ! -f $CONF_DIR/.service_registered ] && [ -f $OMSADMIN_CONF ] || [ -f $SCOMADMIN_CONF ]; then
         echo "Configuring OMS agent service ..."
         if [ ! -f $BIN_DIR/$OMSAGENT_WS ]; then
             ln -s $BIN_DIR/omsagent $BIN_DIR/$OMSAGENT_WS
